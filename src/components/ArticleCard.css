@@ -14,9 +14,9 @@
 }
 
 .article-card.hovered {
-  border-color: var(--border-default);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
 }
 
 /* ── Favicon ─────────────────────────────── */

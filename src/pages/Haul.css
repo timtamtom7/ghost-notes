@@ -2,6 +2,13 @@
   padding: var(--space-10) var(--space-12);
   max-width: 720px;
   margin: 0 auto;
+  animation: pageEnter var(--duration-page) var(--ease-out) forwards;
+  opacity: 0;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .haul-header {

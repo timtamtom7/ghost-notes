@@ -205,7 +205,7 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   letter-spacing: var(--tracking-normal);
-  background: var(--surface-bg);
+  background: radial-gradient(ellipse at 50% 0%, #141413 0%, #0d0d0e 70%);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -406,17 +406,22 @@ a:hover { color: var(--color-accent-hover); }
   box-shadow: 0 0 0 3px var(--color-accent-subtle);
 }
 
-/* ── Card ─────────────────────────────────── */
+/* ── Card (Glass Treatment) ───────────────── */
 .card {
-  background: var(--surface-card);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: border-color var(--duration-normal) var(--ease-out),
-              transform var(--duration-normal) var(--ease-out);
+              transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
 }
 .card:hover {
-  border-color: var(--border-default);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Divider ─────────────────────────────── */
@@ -474,27 +479,6 @@ a:hover { color: var(--color-accent-hover); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ── Staggered List Animation ─────────────── */
-.animate-in > * {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: slideUpFade var(--duration-reveal) var(--ease-out) forwards;
-}
-.animate-in > *:nth-child(1)  { animation-delay: 0ms; }
-.animate-in > *:nth-child(2)  { animation-delay: 55ms; }
-.animate-in > *:nth-child(3)  { animation-delay: 110ms; }
-.animate-in > *:nth-child(4)  { animation-delay: 165ms; }
-.animate-in > *:nth-child(5)  { animation-delay: 220ms; }
-.animate-in > *:nth-child(6)  { animation-delay: 275ms; }
-.animate-in > *:nth-child(7)  { animation-delay: 330ms; }
-.animate-in > *:nth-child(8)  { animation-delay: 385ms; }
-.animate-in > *:nth-child(9)  { animation-delay: 440ms; }
-.animate-in > *:nth-child(10) { animation-delay: 495ms; }
-
-@keyframes slideUpFade {
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* ── Reduced Motion ───────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -502,6 +486,68 @@ a:hover { color: var(--color-accent-hover); }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── Page Transitions ─────────────────────── */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--duration-page) var(--ease-out),
+              transform var(--duration-page) var(--ease-out);
+}
+.page-exit {
+  opacity: 1;
+}
+.page-exit-active {
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+/* ── Article Card Hover Lift ──────────────── */
+.article-card {
+  transition:
+    border-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+.article-card.hovered {
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Staggered Entrance (Refined) ─────────── */
+.animate-in > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: slideUpFade var(--duration-reveal) var(--ease-out) forwards;
+}
+.animate-in > *:nth-child(1)  { animation-delay: 0ms; }
+.animate-in > *:nth-child(2)  { animation-delay: 80ms; }
+.animate-in > *:nth-child(3)  { animation-delay: 160ms; }
+.animate-in > *:nth-child(4)  { animation-delay: 240ms; }
+.animate-in > *:nth-child(5)  { animation-delay: 320ms; }
+.animate-in > *:nth-child(6)  { animation-delay: 400ms; }
+.animate-in > *:nth-child(7)  { animation-delay: 480ms; }
+.animate-in > *:nth-child(8)  { animation-delay: 560ms; }
+.animate-in > *:nth-child(9)  { animation-delay: 640ms; }
+.animate-in > *:nth-child(10) { animation-delay: 720ms; }
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Button Press Feedback ───────────────── */
+.btn:active {
+  transform: scale(0.97) !important;
+}
+.btn-primary:active {
+  transform: scale(0.97) !important;
 }
 
 /* ── Responsive ───────────────────────────── */

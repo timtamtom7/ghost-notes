@@ -2,6 +2,8 @@
   padding: var(--space-10) var(--space-12);
   max-width: 640px;
   margin: 0 auto;
+  animation: pageEnter var(--duration-page) var(--ease-out) forwards;
+  opacity: 0;
 }
 
 .settings-header {

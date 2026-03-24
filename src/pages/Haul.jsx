@@ -6,10 +6,54 @@ import SaveInput from '../components/SaveInput';
 import Toast from '../components/Toast';
 import './Haul.css';
 
+// Sample articles for demo — replace with real data from Firebase
+const SAMPLE_ARTICLES = [
+  {
+    id: 'sample-1',
+    url: 'https://medium.com/@joanna/what-i-learned-from-reading-500-articles',
+    title: 'What I Learned From Reading 500 Articles',
+    description: 'After a year of saving every interesting article I found, here\'s what the data revealed about how I actually consume information — and what I wish I\'d done differently.',
+    readingTime: 8,
+    savedAt: { toDate: () => new Date(Date.now() - 2 * 60 * 60 * 1000) },
+    favicon: 'https://www.google.com/s2/favicons?domain=medium.com&sz=32',
+  },
+  {
+    id: 'sample-2',
+    url: 'https://www.notfun.net/essays/slow-readers',
+    title: 'The Case for Reading Slowly',
+    description: 'We\'ve optimized everything for speed — food, travel, communication. But deep reading is making a quiet comeback, and the people who practice it say it\'s changed how they think.',
+    readingTime: 12,
+    savedAt: { toDate: () => new Date(Date.now() - 18 * 60 * 60 * 1000) },
+    favicon: 'https://www.google.com/s2/favicons?domain=notfun.net&sz=32',
+  },
+  {
+    id: 'sample-3',
+    url: 'https://www.technologyreview.com/2024/the-uncomfortable-state-of-llm-reasoning',
+    title: 'The Uncomfortable State of LLM Reasoning',
+    description: 'Large language models can pass bar exams and write poetry, but they still fail on basic logic puzzles that a child could solve. Researchers are divided on why — and what to do about it.',
+    readingTime: 15,
+    savedAt: { toDate: () => new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+    favicon: 'https://www.google.com/s2/favicons?domain=technologyreview.com&sz=32',
+  },
+  {
+    id: 'sample-4',
+    url: 'https://www.currentaffairs.com/2024/in-defense-of-boring',
+    title: 'In Defense of Boring',
+    description: 'Everywhere you look, people are optimizing for novelty, excitement, and disruption. But the boring stuff — routine, consistency, patience — is what actually builds things that last.',
+    readingTime: 6,
+    savedAt: { toDate: () => new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    favicon: 'https://www.google.com/s2/favicons?domain=currentaffairs.com&sz=32',
+  },
+];
+
 export default function Haul() {
   const { articles, loading, archiveArticle } = useArticles();
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
+
+  // Use sample articles when no real articles are loaded (for demo)
+  const displayArticles = articles.length > 0 ? articles : SAMPLE_ARTICLES;
+  const showEmpty = !loading && displayArticles.length === 0;
 
   const showToast = (message) => {
     setToast(message);
@@ -29,7 +73,7 @@ export default function Haul() {
     }
   };
 
-  const count = articles.length;
+  const count = displayArticles.length;
 
   return (
     <div className="haul-page">
@@ -64,7 +108,7 @@ export default function Haul() {
         </div>
       )}
 
-      {!loading && count === 0 && (
+      {showEmpty && (
         <div className="haul-empty">
           <div className="haul-empty-icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
@@ -79,9 +123,9 @@ export default function Haul() {
         </div>
       )}
 
-      {!loading && count > 0 && (
+      {count > 0 && (
         <div className="haul-list animate-in">
-          {articles.map((article) => (
+          {displayArticles.map((article) => (
             <ArticleCard
               key={article.id}
               article={article}

@@ -37,7 +37,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="landing-features">
+        <section className="landing-features animate-in">
           <div className="landing-feature">
             <div className="landing-feature-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

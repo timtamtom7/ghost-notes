@@ -2,6 +2,8 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 0 var(--space-8) var(--space-20);
+  animation: pageEnter var(--duration-page) var(--ease-out) forwards;
+  opacity: 0;
 }
 
 /* ── Progress Bar ─────────────────────────── */

@@ -7,8 +7,10 @@
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: var(--surface-card);
-  border-right: 1px solid var(--border-subtle);
+  background: rgba(20, 20, 21, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   padding: var(--space-4);
