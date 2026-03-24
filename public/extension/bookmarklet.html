@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghost Notes — Bookmarklet</title>
+  <style>
+    :root {
+      --surface-1: #111110;
+      --surface-2: #1a1a18;
+      --surface-3: #242420;
+      --color-accent: #c8a97e;
+      --color-accent-subtle: rgba(200, 169, 126, 0.12);
+      --color-accent-hover: #b8946a;
+      --text: #fafaf8;
+      --text-muted: #6b6b65;
+      --text-secondary: #9c9c96;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-default: rgba(255, 255, 255, 0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--surface-1);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      max-width: 480px;
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border-default);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      font-size: 15px;
+    }
+
+    /* Bookmarklet drag target */
+    .bookmarklet-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: var(--color-accent);
+      color: #111110;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: grab;
+      text-decoration: none;
+      transition: background 150ms ease, transform 150ms ease;
+      margin-bottom: 32px;
+      user-select: none;
+    }
+
+    .bookmarklet-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-2px);
+    }
+
+    .bookmarklet-btn:active {
+      cursor: grabbing;
+      transform: translateY(0);
+    }
+
+    .instructions {
+      text-align: left;
+      background: var(--surface-3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .instructions h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .instructions ol {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .instructions li {
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      align-items: flex-start;
+    }
+
+    .instructions li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-accent-subtle);
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .mobile-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#c8a97e" opacity="0.3"/>
+        <path d="M9 8.5C9 7.67 9.67 7 10.5 7s1.5.67 1.5 1.5S11.33 10 10.5 10 9 9.33 9 8.5zM14 15.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5z" fill="#c8a97e"/>
+      </svg>
+      <span class="logo-text">Ghost Notes</span>
+    </div>
+
+    <h1>Save articles from anywhere.</h1>
+    <p>Drag the button below to your bookmarks bar. Click it on any page to save it to your Ghost Notes Haul instantly.</p>
+
+    <!-- Bookmarklet: the href is injected by the server or can be the bookmarklet.js content -->
+    <a class="bookmarklet-btn" id="bookmarklet"
+       href="javascript:(function(){var%20title%3Ddocument.querySelector('meta%5Bproperty%3D%22og%3Atitle%22%5D')%3Fdocument.querySelector('meta%5Bproperty%3D%22og%3Atitle%22%5D').content%3Adocument.title%7C%7Clocation.href%3Bvar%20url%3Dlocation.href%3Bvar%20favicon%3Ddocument.querySelector('link%5Brel*%3D%22icon%22%5D')%3Fdocument.querySelector('link%5Brel*%3D%22icon%22%5D').href%3A'https%3A%2F%2Fwww.google.com%2Fs2%2Ffavicons%3Fdomain%3D'+location.hostname+'%26sz%3D32'%3Bvar%20domain%3Dlocation.hostname.replace('www.','')%3Bvar%20saves%3DJSON.parse(localStorage.getItem('gn_bookmarklet_saves')%7C%7C'[]')%3Bif(saves.some(function(s)%7Breturn%20s.url%3D%3Durl%7D))%7Balert('Already%20saved%20to%20Ghost%20Notes!')%3Breturn%7Dsaves.unshift(%7Burl%3Aurl%2Ctitle%3Atitle%2Cfavicon%3Afavicon%2Cdomain%3Adomain%2CsavedAt%3ADate.now()%7D)%3Bif(saves.length%3E50)saves%3Dsaves.slice(0%2C50)%3BlocalStorage.setItem('gn_bookmarklet_saves'%2CJSON.stringify(saves))%3Balert('Saved%20to%20Ghost%20Notes!')%7D)()%3B"
+       title="Save to Ghost Notes">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+      </svg>
+      Save to Ghost Notes
+    </a>
+
+    <div class="instructions">
+      <h2>How to install</h2>
+      <ol>
+        <li>
+          <span class="step-num">1</span>
+          <span><strong>Desktop:</strong> Drag the orange button above to your bookmarks bar.<br>
+          <strong>Mobile:</strong> Tap and hold the button, then choose "Add Bookmark."</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span>Navigate to any article you want to save.</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span>Click your "Save to Ghost Notes" bookmark. Done!</span>
+        </li>
+      </ol>
+      <p class="mobile-note">💡 Mobile Safari: enable the bookmarks bar in Settings → Safari → Show Favorites Bar</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -236,6 +236,7 @@ export default function AppLayout() {
         onClose={() => setSearchOpen(false)}
         articles={articles}
         archivedArticles={archivedArticles}
+        lists={lists}
       />
     </div>
   );

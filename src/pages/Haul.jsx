@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
@@ -51,6 +51,8 @@ const SAMPLE_ARTICLES = [
   },
 ];
 
+const LAST_VISIT_KEY = 'gn-last-visit';
+
 function UpgradeBanner() {
   return (
     <div className="upgrade-banner">
@@ -66,6 +68,155 @@ function UpgradeBanner() {
       <Link to="/pricing" className="btn btn-primary btn-sm">
         Upgrade
       </Link>
+    </div>
+  );
+}
+
+function RetentionBanner({ articles }) {
+  const [lastVisit, setLastVisit] = useState(null);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(LAST_VISIT_KEY);
+    if (saved) setLastVisit(parseInt(saved, 10));
+    localStorage.setItem(LAST_VISIT_KEY, Date.now().toString());
+  }, []);
+
+  if (!lastVisit || dismissed) return null;
+
+  const daysAway = Math.floor((Date.now() - lastVisit) / (1000 * 60 * 60 * 24));
+  if (daysAway < 3) return null;
+
+  // Find stale articles (not opened in 30+ days)
+  const staleArticles = articles.filter((a) => {
+    if (!a.savedAt) return false;
+    const savedDate = a.savedAt?.toDate ? a.savedAt.toDate() : new Date(a.savedAt);
+    return (Date.now() - savedDate.getTime()) > 30 * 24 * 60 * 60 * 1000;
+  });
+
+  return (
+    <div className="retention-banner">
+      <div className="retention-banner-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12,6 12,12 16,14"/>
+        </svg>
+      </div>
+      <div className="retention-banner-text">
+        <p className="retention-banner-title">
+          {daysAway === 1
+            ? "You were last here yesterday."
+            : `You haven't visited in ${daysAway} days.`}
+        </p>
+        <p className="retention-banner-desc">
+          {staleArticles.length > 0
+            ? `${staleArticles.length} article${staleArticles.length !== 1 ? 's' : ''} in your Haul are over 30 days old — consider culling them.`
+            : 'Your Haul is waiting.'}
+        </p>
+      </div>
+      <button
+        className="retention-banner-dismiss"
+        onClick={() => setDismissed(true)}
+        aria-label="Dismiss"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function StaleArticleCard({ article, onRead, onCull }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const savedDate = article.savedAt?.toDate ? article.savedAt.toDate() : new Date(article.savedAt);
+  const daysOld = Math.floor((Date.now() - savedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  return (
+    <div className="stale-article-card">
+      <div className="stale-article-body">
+        <div className="stale-article-favicon">
+          <img
+            src={article.favicon || `https://www.google.com/s2/favicons?domain=${(() => { try { return new URL(article.url).hostname; } catch { return ''; } })()}&sz=32`}
+            alt=""
+            width="14"
+            height="14"
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        </div>
+        <div className="stale-article-info">
+          <p className="stale-article-title">{article.title || article.url}</p>
+          <p className="stale-article-meta">
+            {daysOld} days old
+            {article.readingTime && <> · {article.readingTime} min</>}
+          </p>
+        </div>
+      </div>
+      <div className="stale-article-actions">
+        <button className="btn btn-ghost btn-xs" onClick={() => onRead(article)}>
+          Read
+        </button>
+        <button className="btn btn-ghost btn-xs stale-cull-btn" onClick={() => onCull(article.id)}>
+          Cull
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StaleArticlesSection({ articles, onRead, onCull }) {
+  const [expanded, setExpanded] = useState(true);
+
+  const staleArticles = articles.filter((a) => {
+    if (!a.savedAt) return false;
+    const savedDate = a.savedAt?.toDate ? a.savedAt.toDate() : new Date(a.savedAt);
+    return (Date.now() - savedDate.getTime()) > 30 * 24 * 60 * 60 * 1000;
+  });
+
+  if (staleArticles.length === 0) return null;
+
+  return (
+    <div className="stale-section">
+      <button
+        className="stale-section-header"
+        onClick={() => setExpanded((p) => !p)}
+      >
+        <div className="stale-section-left">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span className="stale-section-title">
+            {staleArticles.length} article{staleArticles.length !== 1 ? 's' : ''} you haven't opened in 30+ days
+          </span>
+        </div>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 150ms ease' }}
+        >
+          <polyline points="6,9 12,15 18,9"/>
+        </svg>
+      </button>
+      {expanded && (
+        <div className="stale-section-list">
+          {staleArticles.map((article) => (
+            <StaleArticleCard
+              key={article.id}
+              article={article}
+              onRead={onRead}
+              onCull={onCull}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -130,6 +281,8 @@ export default function Haul() {
 
       {isFreeUser && <UpgradeBanner />}
 
+      <RetentionBanner articles={displayArticles} />
+
       {FIREBASE_UNCONFIGURED && (
         <div className="haul-notice">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -175,6 +328,15 @@ export default function Haul() {
 
       {showEmpty && (
         <EmptyHaul />
+      )}
+
+      {/* Stale articles section (only show if there are real articles, not samples) */}
+      {articles.length > 0 && !loading && (
+        <StaleArticlesSection
+          articles={articles}
+          onRead={handleRead}
+          onCull={handleCull}
+        />
       )}
 
       {count > 0 && !loading && (

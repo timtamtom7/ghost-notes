@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghost Notes</title>
+  <style>
+    :root {
+      --surface-1: #111110;
+      --surface-2: #1a1a18;
+      --surface-3: #242420;
+      --color-accent: #c8a97e;
+      --color-accent-subtle: rgba(200, 169, 126, 0.12);
+      --color-accent-hover: #b8946a;
+      --color-error: #ef4444;
+      --color-success: #22c55e;
+      --text: #fafaf8;
+      --text-muted: #6b6b65;
+      --text-secondary: #9c9c96;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-default: rgba(255, 255, 255, 0.10);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+      --space-2: 4px;
+      --space-3: 6px;
+      --space-4: 8px;
+      --space-5: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 340px;
+      background: var(--surface-1);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* ── Header ───────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .header-logo svg {
+      color: var(--color-accent);
+    }
+
+    .header-badge {
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      color: var(--text-muted);
+      background: var(--surface-3);
+      border: 1px solid var(--border-default);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ── Save Card ────────────────────────── */
+    .save-card {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .save-card-label {
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-3);
+    }
+
+    .save-article-preview {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+    }
+
+    .save-favicon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--surface-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .save-favicon img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .save-preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .save-preview-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .save-preview-domain {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .save-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-accent);
+      color: #111110;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 150ms ease;
+      font-family: inherit;
+    }
+
+    .save-btn:hover { background: var(--color-accent-hover); }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .save-btn.saved { background: var(--color-success); }
+
+    /* ── Recent Saves ─────────────────────── */
+    .recent-section {
+      padding: var(--space-4) var(--space-5);
+    }
+
+    .recent-label {
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-3);
+    }
+
+    .recent-empty {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-align: center;
+      padding: var(--space-6) 0;
+    }
+
+    .recent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text);
+      transition: background 100ms ease;
+      cursor: pointer;
+    }
+
+    .recent-item:hover { background: var(--surface-2); }
+
+    .recent-favicon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--surface-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recent-favicon img { width: 12px; height: 12px; object-fit: contain; }
+
+    .recent-title {
+      flex: 1;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .recent-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ───────────────────────────── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .footer-link {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      transition: color 100ms ease;
+    }
+
+    .footer-link:hover { color: var(--color-accent); }
+
+    /* ── Confirmation animation ───────────── */
+    @keyframes saveFlash {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    .save-flash { animation: saveFlash 300ms ease; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/>
+        <path d="M9 8.5C9 7.67 9.67 7 10.5 7s1.5.67 1.5 1.5S11.33 10 10.5 10 9 9.33 9 8.5zM14 15.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5z" fill="currentColor"/>
+      </svg>
+      Ghost Notes
+    </div>
+    <span class="header-badge">v1.0</span>
+  </div>
+
+  <!-- Save this page section -->
+  <div class="save-card" id="saveCard">
+    <div class="save-card-label">Save this page</div>
+    <div class="save-article-preview">
+      <div class="save-favicon" id="faviconWrap">
+        <img id="faviconImg" src="" alt="" />
+      </div>
+      <div class="save-preview-info">
+        <div class="save-preview-title" id="pageTitle">Loading…</div>
+        <div class="save-preview-domain" id="pageDomain"></div>
+      </div>
+    </div>
+    <button class="save-btn" id="saveBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+      </svg>
+      Save to Ghost Notes
+    </button>
+  </div>
+
+  <!-- Recent saves -->
+  <div class="recent-section">
+    <div class="recent-label">Recent saves</div>
+    <div class="recent-list" id="recentList">
+      <div class="recent-empty">No saves yet.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="footer-link" href="#" id="openApp">Open Ghost Notes</a>
+    <a class="footer-link" href="#">Configure</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
