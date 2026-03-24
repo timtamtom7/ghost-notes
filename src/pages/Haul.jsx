@@ -6,6 +6,7 @@ import { useSubscription, PLANS } from '../hooks/useSubscription';
 import { FIREBASE_UNCONFIGURED } from '../firebase';
 import ArticleCard from '../components/ArticleCard';
 import SaveInput from '../components/SaveInput';
+import MoveToListModal from '../components/MoveToListModal';
 import Toast from '../components/Toast';
 import { EmptyHaul, NetworkError } from '../components/ErrorState';
 import './Haul.css';
@@ -70,10 +71,11 @@ function UpgradeBanner() {
 }
 
 export default function Haul() {
-  const { articles, loading, archiveArticle, error } = useArticles();
+  const { articles, loading, archiveArticle, error, moveToList } = useArticles();
   const { plan } = useSubscription();
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
+  const [moveModal, setMoveModal] = useState(null);
 
   // Use sample articles when no real articles are loaded (for demo)
   const displayArticles = articles.length > 0 ? articles : SAMPLE_ARTICLES;
@@ -95,6 +97,15 @@ export default function Haul() {
       showToast('Ghost released.');
     } catch (e) {
       // handled in useArticles
+    }
+  };
+
+  const handleMoveArticle = async (articleId, listId, listName) => {
+    try {
+      await moveToList(articleId, listId, listName);
+      showToast(listName ? `Moved to "${listName}".` : 'Removed from list.');
+    } catch {
+      showToast('Failed to move article.');
     }
   };
 
@@ -174,9 +185,19 @@ export default function Haul() {
               article={article}
               onRead={() => handleRead(article)}
               onCull={() => handleCull(article.id)}
+              onMoveToList={() => setMoveModal(article)}
             />
           ))}
         </div>
+      )}
+
+      {moveModal && (
+        <MoveToListModal
+          isOpen={!!moveModal}
+          onClose={() => setMoveModal(null)}
+          article={moveModal}
+          onMoved={(listId, listName) => handleMoveArticle(moveModal.id, listId, listName)}
+        />
       )}
 
       {toast && <Toast message={toast} />}

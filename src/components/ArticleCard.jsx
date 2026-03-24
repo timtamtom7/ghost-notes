@@ -24,7 +24,7 @@ function getDomain(url) {
   }
 }
 
-export default function ArticleCard({ article, onRead, onCull, onReSave }) {
+export default function ArticleCard({ article, onRead, onCull, onReSave, onMoveToList }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -85,6 +85,13 @@ export default function ArticleCard({ article, onRead, onCull, onReSave }) {
         {onRead && (
           <button className="btn btn-secondary btn-sm article-action-read" onClick={onRead}>
             Read
+          </button>
+        )}
+        {onMoveToList && (
+          <button className="btn btn-ghost btn-sm" onClick={onMoveToList} title="Move to list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
           </button>
         )}
         {onCull && (

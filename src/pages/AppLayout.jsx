@@ -1,6 +1,9 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useLists } from '../hooks/useLists';
+import { useArticles } from '../hooks/useArticles';
+import SearchModal from '../components/SearchModal';
 import './AppLayout.css';
 
 function ThemeToggle() {
@@ -31,9 +34,29 @@ function ThemeToggle() {
 
 export default function AppLayout() {
   const { user, logOut } = useAuth();
+  const { lists } = useLists();
+  const { articles, archivedArticles } = useArticles();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [listsExpanded, setListsExpanded] = useState(true);
+
+  // All articles for search
+  const allArticles = [...articles, ...archivedArticles];
+  const getListCount = (listId) => allArticles.filter((a) => a.listId === listId).length;
+
+  // Global Cmd+K handler
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSignOut = async () => {
     await logOut();
@@ -73,7 +96,7 @@ export default function AppLayout() {
           <div className="sidebar-logo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/>
-              <path d="M9 8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S11.33 10 10.5 10 9 9.33 9 8.5zM14 15.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5z" fill="currentColor"/>
+              <path d="M9 8.5C9 7.67 9.67 7 10.5 7s1.5.67 1.5 1.5S11.33 10 10.5 10 9 9.33 9 8.5zM14 15.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5z" fill="currentColor"/>
               <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 18a8 8 0 110-16 8 8 0 010 16z" fill="currentColor" opacity="0.15"/>
             </svg>
             <span>Ghost Notes</span>
@@ -88,6 +111,15 @@ export default function AppLayout() {
             </svg>
             <span>Haul</span>
           </NavLink>
+          <NavLink to="/app/lists" className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} onClick={() => setMobileNavOpen(false)}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <span>Lists</span>
+            {lists.length > 0 && (
+              <span className="sidebar-badge">{lists.length}</span>
+            )}
+          </NavLink>
           <NavLink to="/app/archive" className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} onClick={() => setMobileNavOpen(false)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <polyline points="21,8 21,21 3,21 3,8"/>
@@ -96,6 +128,62 @@ export default function AppLayout() {
             </svg>
             <span>Archive</span>
           </NavLink>
+
+          {/* Search shortcut hint */}
+          <button className="sidebar-link sidebar-search-btn" onClick={() => setSearchOpen(true)}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <span>Search</span>
+            <kbd className="sidebar-kbd">⌘K</kbd>
+          </button>
+
+          {lists.length > 0 && (
+            <div className="sidebar-lists">
+              <button
+                className="sidebar-lists-toggle"
+                onClick={() => setListsExpanded((p) => !p)}
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  style={{ transform: listsExpanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 150ms ease' }}
+                >
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+                <span>Your lists</span>
+              </button>
+              {listsExpanded && (
+                <div className="sidebar-lists-items">
+                  {lists.map((list) => (
+                    <NavLink
+                      key={list.id}
+                      to={`/app/lists/${list.id}`}
+                      className={({ isActive }) => `sidebar-list-item${isActive ? ' active' : ''}`}
+                      onClick={() => setMobileNavOpen(false)}
+                    >
+                      <span className="sidebar-list-name">{list.name}</span>
+                      <span className="sidebar-list-count">{getListCount(list.id)}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="sidebar-divider" />
+
+          <a href="/pricing" className="sidebar-link" onClick={() => setMobileNavOpen(false)}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span>Pricing</span>
+          </a>
           <NavLink to="/app/settings" className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} onClick={() => setMobileNavOpen(false)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="12" cy="12" r="3"/>
@@ -103,12 +191,6 @@ export default function AppLayout() {
             </svg>
             <span>Settings</span>
           </NavLink>
-          <a href="/pricing" className="sidebar-link" onClick={() => setMobileNavOpen(false)}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            <span>Pricing</span>
-          </a>
         </nav>
 
         <div className="sidebar-bottom">
@@ -147,6 +229,14 @@ export default function AppLayout() {
       <main className="app-main">
         <Outlet />
       </main>
+
+      {/* Global Search Modal */}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        articles={articles}
+        archivedArticles={archivedArticles}
+      />
     </div>
   );
 }

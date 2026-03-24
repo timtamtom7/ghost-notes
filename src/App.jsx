@@ -10,6 +10,7 @@ import Archive from './pages/Archive';
 import Reading from './pages/Reading';
 import Settings from './pages/Settings';
 import Pricing from './pages/Pricing';
+import Lists from './pages/Lists';
 import Onboarding, { ONBOARDING_KEY } from './components/Onboarding';
 
 function ThemeManager() {
@@ -80,6 +81,8 @@ function AppRoutes() {
           }
         >
           <Route index element={<Haul />} />
+          <Route path="lists" element={<Lists />} />
+          <Route path="lists/:id" element={<Lists />} />
           <Route path="archive" element={<Archive />} />
           <Route path="settings" element={<Settings />} />
         </Route>

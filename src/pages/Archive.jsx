@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
 import { useSubscription, PLANS } from '../hooks/useSubscription';
 import ArticleCard from '../components/ArticleCard';
+import MoveToListModal from '../components/MoveToListModal';
 import Toast from '../components/Toast';
 import { NetworkError } from '../components/ErrorState';
 import './Archive.css';
@@ -22,11 +23,78 @@ function UpgradeNote() {
   );
 }
 
+function StatsHeader({ archivedArticles, articles }) {
+  const readCount = archivedArticles.filter((a) => a.archiveAction === 'read').length;
+  const culledCount = archivedArticles.filter((a) => a.archiveAction === 'culled').length;
+  const totalSaved = archivedArticles.length;
+  const cullRate = totalSaved > 0 ? Math.round((culledCount / totalSaved) * 100) : 0;
+
+  // Sum reading times from ALL articles (both active and archived)
+  const allArticles = [...articles, ...archivedArticles];
+  const totalReadingTime = allArticles.reduce((sum, a) => sum + (a.readingTime || 0), 0);
+
+  const totalHours = Math.floor(totalReadingTime / 60);
+  const totalMins = totalReadingTime % 60;
+
+  const readPct = totalSaved > 0 ? Math.round((readCount / totalSaved) * 100) : 0;
+  const culledPct = totalSaved > 0 ? Math.round((culledCount / totalSaved) * 100) : 0;
+
+  if (totalSaved === 0) return null;
+
+  return (
+    <div className="stats-header">
+      <div className="stats-summary">
+        <div className="stats-stat">
+          <span className="stats-stat-value">{totalSaved}</span>
+          <span className="stats-stat-label">saved</span>
+        </div>
+        <div className="stats-sep" />
+        <div className="stats-stat">
+          <span className="stats-stat-value">{readCount}</span>
+          <span className="stats-stat-label">read</span>
+        </div>
+        <div className="stats-sep" />
+        <div className="stats-stat">
+          <span className="stats-stat-value">{culledCount}</span>
+          <span className="stats-stat-label">culled</span>
+        </div>
+        <div className="stats-sep" />
+        <div className="stats-stat">
+          <span className="stats-stat-value">{cullRate}%</span>
+          <span className="stats-stat-label">cull rate</span>
+        </div>
+        {totalReadingTime > 0 && (
+          <>
+            <div className="stats-sep" />
+            <div className="stats-stat">
+              <span className="stats-stat-value">
+                {totalHours > 0 ? `${totalHours}h ${totalMins}m` : `${totalMins}m`}
+              </span>
+              <span className="stats-stat-label">read time</span>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Mini bar chart */}
+      <div className="stats-bar-chart" aria-hidden="true">
+        {readPct > 0 && (
+          <div className="stats-bar-segment read" style={{ width: `${readPct}%` }} title={`${readPct}% read`} />
+        )}
+        {culledPct > 0 && (
+          <div className="stats-bar-segment culled" style={{ width: `${culledPct}%` }} title={`${culledPct}% culled`} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Archive() {
-  const { archivedArticles, reSaveArticle, error } = useArticles();
+  const { archivedArticles, reSaveArticle, error, moveToList, articles } = useArticles();
   const [filter, setFilter] = useState('all'); // 'all' | 'read' | 'culled'
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState(null);
+  const [moveModal, setMoveModal] = useState(null);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -51,6 +119,15 @@ export default function Archive() {
     showToast('Moved back to your Haul.');
   };
 
+  const handleMoveArticle = async (articleId, listId, listName) => {
+    try {
+      await moveToList(articleId, listId, listName);
+      showToast(listName ? `Moved to "${listName}".` : 'Removed from list.');
+    } catch {
+      showToast('Failed to move article.');
+    }
+  };
+
   return (
     <div className="archive-page">
       <div className="archive-header">
@@ -64,6 +141,7 @@ export default function Archive() {
         </div>
       </div>
 
+      <StatsHeader archivedArticles={archivedArticles} articles={articles} />
       <UpgradeNote />
 
       {error && !archivedArticles.length && (
@@ -127,9 +205,19 @@ export default function Archive() {
               key={article.id}
               article={article}
               onReSave={() => handleReSave(article.id)}
+              onMoveToList={() => setMoveModal(article)}
             />
           ))}
         </div>
+      )}
+
+      {moveModal && (
+        <MoveToListModal
+          isOpen={!!moveModal}
+          onClose={() => setMoveModal(null)}
+          article={moveModal}
+          onMoved={(listId, listName) => handleMoveArticle(moveModal.id, listId, listName)}
+        />
       )}
 
       {toast && <Toast message={toast} />}
