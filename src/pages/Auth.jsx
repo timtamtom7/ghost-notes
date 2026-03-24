@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { FIREBASE_UNCONFIGURED } from '../firebase';
 import './Auth.css';
 
 export default function Auth() {
@@ -75,6 +76,19 @@ export default function Auth() {
           <span>Ghost Notes</span>
         </div>
 
+        {FIREBASE_UNCONFIGURED && (
+          <div className="auth-notice">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>
+              <strong>Firebase not configured yet.</strong> See <code>TO-DO.md</code> for setup instructions. Auth will not work until Firebase is configured.
+            </span>
+          </div>
+        )}
+
         {mode === 'email' && (
           <>
             <h1>Welcome back.</h1>
@@ -92,13 +106,14 @@ export default function Auth() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoFocus
+                  disabled={FIREBASE_UNCONFIGURED}
                 />
               </div>
               {error && <p className="auth-error">{error}</p>}
               <button
                 type="submit"
                 className={`btn btn-primary btn-full${submitting ? ' btn-loading' : ''}`}
-                disabled={submitting}
+                disabled={submitting || FIREBASE_UNCONFIGURED}
               >
                 {submitting ? 'Sending…' : 'Send magic link'}
               </button>

@@ -103,7 +103,9 @@ export default function Reading() {
       <div className="reading-meta-bar">
         <div className="reading-source">
           <img
-            src={article.favicon || `https://www.google.com/s2/favicons?domain=${new URL(article.url).hostname}&sz=32`}
+            src={article.favicon || (() => {
+              try { return `https://www.google.com/s2/favicons?domain=${new URL(article.url).hostname}&sz=32`; } catch { return ''; }
+            })()}
             alt=""
             width="16"
             height="16"
@@ -111,7 +113,9 @@ export default function Reading() {
             onError={(e) => e.target.style.display = 'none'}
           />
           <a href={article.url} target="_blank" rel="noopener noreferrer" className="reading-source-link">
-            {new URL(article.url).hostname.replace('www.', '')}
+            {(() => {
+              try { return new URL(article.url).hostname.replace('www.', ''); } catch { return article.url; }
+            })()}
           </a>
         </div>
         {article.readingTime && (

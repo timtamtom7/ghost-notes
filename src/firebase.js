@@ -17,6 +17,10 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"
 };
 
+// True if the config contains placeholder values (not yet configured)
+export const FIREBASE_UNCONFIGURED =
+  firebaseConfig.apiKey === 'YOUR_FIREBASE_API_KEY';
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

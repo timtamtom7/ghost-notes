@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
+import { FIREBASE_UNCONFIGURED } from '../firebase';
 import ArticleCard from '../components/ArticleCard';
 import SaveInput from '../components/SaveInput';
 import Toast from '../components/Toast';
@@ -89,6 +90,19 @@ export default function Haul() {
           </p>
         </div>
       </div>
+
+      {FIREBASE_UNCONFIGURED && (
+        <div className="haul-notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>
+            <strong>Demo mode.</strong> Firebase is not configured — see <code>TO-DO.md</code>. Saving articles won't work until Firebase is set up.
+          </span>
+        </div>
+      )}
 
       <div className="haul-save">
         <SaveInput onSave={() => showToast('Article saved.')} />

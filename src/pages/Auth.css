@@ -87,6 +87,37 @@
   opacity: 0.8;
 }
 
+.auth-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-warning-subtle);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.auth-notice svg {
+  color: var(--color-warning);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.auth-notice strong {
+  color: var(--text);
+}
+
+.auth-notice code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background: var(--surface-elevated);
+  padding: 1px 4px;
+  border-radius: var(--radius-xs);
+}
+
 .auth-sent-icon {
   width: 56px;
   height: 56px;
