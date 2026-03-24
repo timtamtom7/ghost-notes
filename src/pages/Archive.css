@@ -142,6 +142,24 @@
   gap: var(--space-3);
 }
 
+.archive-upgrade-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-accent-subtle);
+  border: 1px solid rgba(200, 169, 126, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.archive-upgrade-note svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
   .archive-page {
     padding: var(--space-6) var(--space-6);

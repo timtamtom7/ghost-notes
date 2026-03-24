@@ -1,11 +1,29 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
+import { useSubscription, PLANS } from '../hooks/useSubscription';
 import ArticleCard from '../components/ArticleCard';
 import Toast from '../components/Toast';
+import { NetworkError } from '../components/ErrorState';
 import './Archive.css';
 
+function UpgradeNote() {
+  const { plan } = useSubscription();
+  if (plan !== PLANS.FREE) return null;
+  return (
+    <div className="archive-upgrade-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <span>Advanced stats, export, and cloud backup are Pro features.{' '}
+        <Link to="/pricing" style={{ color: 'var(--color-accent)' }}>Upgrade →</Link>
+      </span>
+    </div>
+  );
+}
+
 export default function Archive() {
-  const { archivedArticles, reSaveArticle } = useArticles();
+  const { archivedArticles, reSaveArticle, error } = useArticles();
   const [filter, setFilter] = useState('all'); // 'all' | 'read' | 'culled'
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState(null);
@@ -46,6 +64,12 @@ export default function Archive() {
         </div>
       </div>
 
+      <UpgradeNote />
+
+      {error && !archivedArticles.length && (
+        <NetworkError onRetry={() => window.location.reload()} />
+      )}
+
       {archivedArticles.length > 0 && (
         <div className="archive-controls">
           <div className="archive-search-wrapper">
@@ -75,7 +99,7 @@ export default function Archive() {
         </div>
       )}
 
-      {archivedArticles.length === 0 && (
+      {archivedArticles.length === 0 && !error && (
         <div className="archive-empty">
           <div className="archive-empty-icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">

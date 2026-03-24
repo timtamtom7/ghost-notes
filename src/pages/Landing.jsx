@@ -14,6 +14,7 @@ export default function Landing() {
           <span>Ghost Notes</span>
         </div>
         <nav className="landing-nav">
+          <Link to="/pricing" className="btn btn-ghost btn-sm">Pricing</Link>
           <Link to="/auth" className="btn btn-ghost btn-sm">Sign in</Link>
           <Link to="/auth" className="btn btn-primary btn-sm">Get started</Link>
         </nav>

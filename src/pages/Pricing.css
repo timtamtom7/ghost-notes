@@ -1,0 +1,353 @@
+/* ── Ghost Notes Pricing — Dark Streetwear ─────────────── */
+
+.pricing-page {
+  min-height: 100vh;
+  background: var(--surface-bg);
+  padding: var(--space-12) var(--space-8);
+}
+
+/* ── Header Band ─────────────────────────────── */
+.pricing-topband {
+  max-width: 760px;
+  margin: 0 auto var(--space-16);
+  text-align: center;
+}
+
+.pricing-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+  display: block;
+}
+
+.pricing-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: var(--space-5);
+}
+
+.pricing-subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Tier Grid ──────────────────────────────── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── Individual Tier Card ───────────────────── */
+.tier-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  position: relative;
+  transition:
+    border-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.tier-card:hover {
+  border-color: var(--border-default);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.tier-card.featured {
+  border-color: var(--color-accent);
+  background: linear-gradient(
+    160deg,
+    rgba(200, 169, 126, 0.06) 0%,
+    var(--surface-card) 60%
+  );
+  box-shadow: 0 0 0 1px rgba(200, 169, 126, 0.2),
+              0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.tier-card.featured:hover {
+  border-color: var(--color-accent-hover);
+  box-shadow: 0 0 0 1px rgba(200, 169, 126, 0.35),
+              0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+/* Pro badge — corner ribbon */
+.tier-card.featured::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: 24px;
+  width: 80px;
+  height: 24px;
+  background: var(--color-accent);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.tier-card.featured::after {
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: 5px;
+  right: 28px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-text);
+}
+
+/* ── Tier Header ─────────────────────────────── */
+.tier-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.tier-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.tier-price {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -0.03em;
+}
+
+.tier-price-period {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.tier-description {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Feature List ───────────────────────────── */
+.tier-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.tier-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+}
+
+.tier-feature-item .feature-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent);
+  margin-top: 1px;
+}
+
+.tier-feature-item.locked {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+.tier-feature-item .feature-lock {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--text-disabled);
+  margin-top: 2px;
+}
+
+/* Pro badge inline */
+.pro-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 6px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+/* ── CTA Button ─────────────────────────────── */
+.tier-cta {
+  margin-top: auto;
+}
+
+.tier-cta .btn {
+  width: 100%;
+  height: 44px;
+  font-size: var(--text-sm);
+}
+
+.tier-cta .btn-secondary {
+  background: var(--surface-elevated);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+/* ── Divider between tiers ─────────────────── */
+.tier-divider {
+  width: 1px;
+  background: var(--border-subtle);
+  align-self: stretch;
+  margin: var(--space-12) 0;
+}
+
+/* ── FAQ Section ─────────────────────────────── */
+.pricing-faq {
+  max-width: 600px;
+  margin: var(--space-20) auto 0;
+  text-align: left;
+}
+
+.pricing-faq-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: var(--space-5) 0;
+}
+
+.faq-question {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-sans);
+}
+
+.faq-question:hover {
+  color: var(--color-accent);
+}
+
+.faq-answer {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Footer Note ─────────────────────────────── */
+.pricing-footer-note {
+  text-align: center;
+  margin-top: var(--space-10);
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ── Upgrade Prompt Banner ────────────────────── */
+.upgrade-banner {
+  background: linear-gradient(135deg, rgba(200, 169, 126, 0.08), rgba(200, 169, 126, 0.03));
+  border: 1px solid rgba(200, 169, 126, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.upgrade-banner-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--color-accent-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+}
+
+.upgrade-banner-text {
+  flex: 1;
+}
+
+.upgrade-banner-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.upgrade-banner-desc {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+
+  .tier-card.featured {
+    order: -1;
+  }
+
+  .tier-card::before,
+  .tier-card::after {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-page {
+    padding: var(--space-8) var(--space-4);
+  }
+}

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
+import { useSubscription, PLANS } from '../hooks/useSubscription';
 import { FIREBASE_UNCONFIGURED } from '../firebase';
 import ArticleCard from '../components/ArticleCard';
 import SaveInput from '../components/SaveInput';
 import Toast from '../components/Toast';
+import { EmptyHaul, NetworkError } from '../components/ErrorState';
 import './Haul.css';
 
 // Sample articles for demo — replace with real data from Firebase
@@ -47,14 +50,35 @@ const SAMPLE_ARTICLES = [
   },
 ];
 
+function UpgradeBanner() {
+  return (
+    <div className="upgrade-banner">
+      <div className="upgrade-banner-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div className="upgrade-banner-text">
+        <p className="upgrade-banner-title">You're on the Free plan</p>
+        <p className="upgrade-banner-desc">Upgrade to Pro for unlimited hauls, cloud backup, and data export.</p>
+      </div>
+      <Link to="/pricing" className="btn btn-primary btn-sm">
+        Upgrade
+      </Link>
+    </div>
+  );
+}
+
 export default function Haul() {
-  const { articles, loading, archiveArticle } = useArticles();
+  const { articles, loading, archiveArticle, error } = useArticles();
+  const { plan } = useSubscription();
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
 
   // Use sample articles when no real articles are loaded (for demo)
   const displayArticles = articles.length > 0 ? articles : SAMPLE_ARTICLES;
-  const showEmpty = !loading && displayArticles.length === 0;
+  const showEmpty = !loading && displayArticles.length === 0 && !error;
+  const showNetworkError = error && !loading;
 
   const showToast = (message) => {
     setToast(message);
@@ -75,6 +99,8 @@ export default function Haul() {
   };
 
   const count = displayArticles.length;
+  const isFreeUser = plan === PLANS.FREE;
+  const atLimit = isFreeUser && count >= 5;
 
   return (
     <div className="haul-page">
@@ -91,6 +117,8 @@ export default function Haul() {
         </div>
       </div>
 
+      {isFreeUser && <UpgradeBanner />}
+
       {FIREBASE_UNCONFIGURED && (
         <div className="haul-notice">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -105,7 +133,15 @@ export default function Haul() {
       )}
 
       <div className="haul-save">
-        <SaveInput onSave={() => showToast('Article saved.')} />
+        <SaveInput onSave={() => showToast('Article saved.')} disabled={atLimit} />
+        {atLimit && (
+          <p className="haul-limit-note">
+            Free plan limit reached.{' '}
+            <Link to="/pricing" style={{ color: 'var(--color-accent)' }}>
+              Upgrade to save more →
+            </Link>
+          </p>
+        )}
       </div>
 
       {loading && (
@@ -122,22 +158,15 @@ export default function Haul() {
         </div>
       )}
 
-      {showEmpty && (
-        <div className="haul-empty">
-          <div className="haul-empty-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/>
-              <line x1="9" y1="13" x2="15" y2="13"/>
-              <line x1="9" y1="17" x2="12" y2="17"/>
-            </svg>
-          </div>
-          <h3>No ghosts yet.</h3>
-          <p>Save your first article above. Paste a URL and press Enter — we'll fetch the title and details for you.</p>
-        </div>
+      {showNetworkError && (
+        <NetworkError onRetry={() => window.location.reload()} />
       )}
 
-      {count > 0 && (
+      {showEmpty && (
+        <EmptyHaul />
+      )}
+
+      {count > 0 && !loading && (
         <div className="haul-list animate-in">
           {displayArticles.map((article) => (
             <ArticleCard

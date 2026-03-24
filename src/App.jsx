@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { SubscriptionProvider } from './hooks/useSubscription';
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
 import AppLayout from './pages/AppLayout';
@@ -8,6 +9,8 @@ import Haul from './pages/Haul';
 import Archive from './pages/Archive';
 import Reading from './pages/Reading';
 import Settings from './pages/Settings';
+import Pricing from './pages/Pricing';
+import Onboarding, { ONBOARDING_KEY } from './components/Onboarding';
 
 function ThemeManager() {
   useEffect(() => {
@@ -44,32 +47,53 @@ function LoadingSpinner() {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (user && !loading) {
+      const completed = localStorage.getItem(ONBOARDING_KEY);
+      if (!completed) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, loading]);
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
+
   return (
-    <Routes>
-      <Route path="/" element={user ? <Navigate to="/app" replace /> : <Landing />} />
-      <Route path="/auth" element={<Auth />} />
-      <Route
-        path="/app"
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Haul />} />
-        <Route path="archive" element={<Archive />} />
-        <Route path="settings" element={<Settings />} />
-      </Route>
-      <Route
-        path="/read/:id"
-        element={
-          <ProtectedRoute>
-            <Reading />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      {showOnboarding && user && (
+        <Onboarding onComplete={handleOnboardingComplete} />
+      )}
+      <Routes>
+        <Route path="/" element={user ? <Navigate to="/app" replace /> : <Landing />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Haul />} />
+          <Route path="archive" element={<Archive />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+        <Route
+          path="/read/:id"
+          element={
+            <ProtectedRoute>
+              <Reading />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 
@@ -78,7 +102,9 @@ export default function App() {
     <BrowserRouter>
       <ThemeManager />
       <AuthProvider>
-        <AppRoutes />
+        <SubscriptionProvider>
+          <AppRoutes />
+        </SubscriptionProvider>
       </AuthProvider>
     </BrowserRouter>
   );

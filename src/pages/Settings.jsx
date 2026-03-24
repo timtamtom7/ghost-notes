@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useSubscription, PLANS } from '../hooks/useSubscription';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import Toast from '../components/Toast';
@@ -7,6 +9,7 @@ import './Settings.css';
 
 export default function Settings() {
   const { user, logOut } = useAuth();
+  const { plan } = useSubscription();
   const [theme, setTheme] = useState(() => localStorage.getItem('gn-theme') || 'dark');
   const [emailEnabled, setEmailEnabled] = useState(false);
   const [haulFrequency, setHaulFrequency] = useState('7');
@@ -46,6 +49,18 @@ export default function Settings() {
     await logOut();
   };
 
+  const planLabel = {
+    [PLANS.FREE]: 'Free',
+    [PLANS.PRO]: 'Pro',
+    [PLANS.TEAM]: 'Team',
+  }[plan] || 'Free';
+
+  const planColors = {
+    [PLANS.FREE]: 'var(--text-muted)',
+    [PLANS.PRO]: 'var(--color-accent)',
+    [PLANS.TEAM]: 'var(--color-accent)',
+  }[plan] || 'var(--text-muted)';
+
   return (
     <div className="settings-page">
       <div className="settings-header">
@@ -54,6 +69,66 @@ export default function Settings() {
       </div>
 
       <div className="settings-sections">
+
+        {/* Subscription */}
+        <section className="settings-section">
+          <h2 className="settings-section-title">Subscription</h2>
+          <div className="settings-card">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Current plan</span>
+                <span className="settings-row-desc" style={{ color: planColors, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                  {planLabel}
+                  {plan === PLANS.PRO && (
+                    <span className="pro-badge" style={{ marginLeft: 8, verticalAlign: 'middle' }}>Pro</span>
+                  )}
+                </span>
+              </div>
+              {plan === PLANS.FREE && (
+                <Link to="/pricing" className="btn btn-primary btn-sm">
+                  Upgrade
+                </Link>
+              )}
+              {plan !== PLANS.FREE && (
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  Active
+                </span>
+              )}
+            </div>
+
+            {plan === PLANS.FREE && (
+              <>
+                <div className="settings-divider" />
+                <div className="settings-row">
+                  <div className="settings-row-info">
+                    <span className="settings-row-label">Saved articles</span>
+                    <span className="settings-row-desc">
+                      0 / 5 on Free plan
+                    </span>
+                  </div>
+                  <Link to="/pricing" className="btn btn-secondary btn-sm">
+                    See Pro features
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {plan !== PLANS.FREE && (
+              <>
+                <div className="settings-divider" />
+                <div className="settings-row">
+                  <div className="settings-row-info">
+                    <span className="settings-row-label">Billing</span>
+                    <span className="settings-row-desc">Manage your subscription and billing details.</span>
+                  </div>
+                  <button className="btn btn-secondary btn-sm" disabled>
+                    Manage billing
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
 
         {/* Appearance */}
         <section className="settings-section">

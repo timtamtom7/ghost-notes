@@ -1,0 +1,90 @@
+/* ── Error State Shared ───────────────────── */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  gap: var(--space-5);
+}
+
+.error-icon {
+  color: var(--text-disabled);
+  opacity: 0.6;
+}
+
+.error-icon.ghost-icon {
+  opacity: 1;
+  animation: ghostBob 3s ease-in-out infinite;
+}
+
+@keyframes ghostBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.error-icon.small {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.error-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin: 0;
+}
+
+.error-title.small {
+  font-size: var(--text-base);
+}
+
+.error-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 320px;
+  margin: 0;
+}
+
+.error-desc.tiny {
+  font-size: var(--text-xs);
+}
+
+/* ── Inline / Compact ──────────────────────── */
+.inline-error {
+  flex-direction: row;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-error-subtle);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  gap: var(--space-4);
+  text-align: left;
+}
+
+.inline-error .error-title {
+  font-size: var(--text-sm);
+}
+
+.inline-error .error-desc {
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+/* ── Session Expired ────────────────────────── */
+.session-expired {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* ── Empty Haul specific ───────────────────── */
+.empty-haul {
+  padding: var(--space-20) var(--space-8);
+}

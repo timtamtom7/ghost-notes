@@ -123,6 +123,13 @@
   gap: var(--space-3);
 }
 
+.haul-limit-note {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+}
+
 @media (max-width: 768px) {
   .haul-page {
     padding: var(--space-6) var(--space-6);

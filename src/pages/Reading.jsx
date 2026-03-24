@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useArticles } from '../hooks/useArticles';
+import { useSubscription, PLANS } from '../hooks/useSubscription';
+import { ArticleLoadError, SessionExpired } from '../components/ErrorState';
 import './Reading.css';
 
 export default function Reading() {
@@ -8,10 +10,13 @@ export default function Reading() {
   const navigate = useNavigate();
   const location = useLocation();
   const { archiveArticle } = useArticles();
+  const { plan } = useSubscription();
 
   const article = location.state?.article;
   const [readStatus, setReadStatus] = useState('reading'); // 'reading' | 'done'
   const [progress, setProgress] = useState(0);
+  const [loadError, setLoadError] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
     // Track scroll progress
@@ -28,12 +33,22 @@ export default function Reading() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Detect if article failed to load (e.g. network issue)
+  useEffect(() => {
+    if (!article) {
+      setLoadError(true);
+    }
+  }, [article]);
+
   const handleDone = async () => {
     try {
       await archiveArticle(id, 'read');
       setReadStatus('done');
       setTimeout(() => navigate('/app'), 800);
-    } catch (e) {
+    } catch (err) {
+      if (err.message?.includes('auth') || err.message?.includes('permission')) {
+        setSessionExpired(true);
+      }
       navigate('/app');
     }
   };
@@ -42,18 +57,31 @@ export default function Reading() {
     try {
       await archiveArticle(id, 'culled');
       navigate('/app');
-    } catch (e) {
+    } catch (err) {
+      if (err.message?.includes('auth') || err.message?.includes('permission')) {
+        setSessionExpired(true);
+      }
       navigate('/app');
     }
   };
 
-  if (!article) {
+  if (loadError || sessionExpired) {
     return (
-      <div className="reading-loading">
-        <p>Loading article…</p>
+      <div className="reading-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+        {sessionExpired ? (
+          <SessionExpired onSignIn={() => navigate('/auth')} />
+        ) : (
+          <ArticleLoadError onRetry={() => window.location.reload()} />
+        )}
       </div>
     );
   }
+
+  if (!article) {
+    return null;
+  }
+
+  const isFreeUser = plan === PLANS.FREE;
 
   return (
     <div className="reading-page">
@@ -120,6 +148,11 @@ export default function Reading() {
         </div>
         {article.readingTime && (
           <span className="reading-time">{article.readingTime} min read</span>
+        )}
+        {isFreeUser && (
+          <span className="reading-pro-tag">
+            Pro feature — open in browser
+          </span>
         )}
       </div>
 

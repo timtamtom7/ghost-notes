@@ -6,11 +6,12 @@ function extractDomain(url) {
   try { return new URL(url).hostname.replace('www.', ''); } catch { return url; }
 }
 
-export default function SaveInput({ onSave }) {
+export default function SaveInput({ onSave, disabled }) {
   const [url, setUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [pulse, setPulse] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
   const { saveArticle } = useArticles();
 
   const isValidUrl = (string) => {
@@ -19,7 +20,7 @@ export default function SaveInput({ onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!url.trim()) return;
+    if (!url.trim() || disabled) return;
 
     let finalUrl = url.trim();
     if (!finalUrl.match(/^https?:\/\//)) {
@@ -32,6 +33,7 @@ export default function SaveInput({ onSave }) {
     }
 
     setError('');
+    setNetworkError(false);
     setSaving(true);
 
     try {
@@ -76,7 +78,12 @@ export default function SaveInput({ onSave }) {
       setTimeout(() => setPulse(false), 600);
       onSave?.();
     } catch (err) {
-      setError(err.message || 'Failed to save. Please try again.');
+      if (err.name === 'TypeError' || err.message.includes('network') || err.message.includes('fetch')) {
+        setNetworkError(true);
+        setError('');
+      } else {
+        setError(err.message || 'Failed to save. Please try again.');
+      }
     } finally {
       setSaving(false);
     }
@@ -92,22 +99,33 @@ export default function SaveInput({ onSave }) {
         <input
           type="text"
           className="save-input"
-          placeholder="Paste a URL to save it for later…"
+          placeholder={disabled ? 'Upgrade to save more articles…' : 'Paste a URL to save it for later…'}
           value={url}
-          onChange={(e) => { setUrl(e.target.value); setError(''); }}
-          disabled={saving}
+          onChange={(e) => { setUrl(e.target.value); setError(''); setNetworkError(false); }}
+          disabled={saving || disabled}
           autoComplete="off"
           spellCheck="false"
         />
         <button
           type="submit"
           className={`btn btn-primary btn-sm save-btn${saving ? ' btn-loading' : ''}`}
-          disabled={saving || !url.trim()}
+          disabled={saving || !url.trim() || disabled}
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
       </div>
       {error && <p className="save-input-error">{error}</p>}
+      {networkError && (
+        <div className="save-input-network-error">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M1 1l22 22"/>
+            <path d="M16.72 11.06A10.94 10.94 0 0119 12.55"/>
+            <path d="M5 12.55a10.94 10.94 0 015.17-2.39"/>
+            <line x1="12" y1="20" x2="12.01" y2="20"/>
+          </svg>
+          <span>Network error — couldn't save. Check your connection and retry.</span>
+        </div>
+      )}
     </form>
   );
 }
