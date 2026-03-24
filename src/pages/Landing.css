@@ -1,0 +1,206 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-bg);
+}
+
+/* ── Header ─────────────────────────────── */
+.landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-12);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--surface-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: var(--z-sticky);
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  letter-spacing: var(--tracking-tight);
+}
+
+.landing-logo svg {
+  color: var(--color-accent);
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ── Hero ───────────────────────────────── */
+.landing-main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-24) var(--space-8);
+  width: 100%;
+}
+
+.landing-hero {
+  text-align: center;
+  margin-bottom: var(--space-24);
+}
+
+.landing-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-6);
+}
+
+.landing-headline {
+  font-family: var(--font-serif);
+  font-size: var(--text-7xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: var(--space-8);
+}
+
+.landing-subhead {
+  font-size: var(--text-xl);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 520px;
+  margin: 0 auto var(--space-10);
+}
+
+.landing-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing-cta-note {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ── Features ───────────────────────────── */
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-24);
+}
+
+.landing-feature {
+  padding: var(--space-8);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
+}
+
+.landing-feature:hover {
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+}
+
+.landing-feature-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.landing-feature h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+
+.landing-feature p {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Manifesto ──────────────────────────── */
+.landing-manifesto {
+  text-align: center;
+  padding: var(--space-16) 0;
+}
+
+.landing-manifesto blockquote {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.landing-manifesto blockquote::before {
+  content: '"';
+  font-size: 5rem;
+  color: var(--color-accent);
+  opacity: 0.3;
+  position: absolute;
+  top: -2rem;
+  left: -2rem;
+  font-family: var(--font-serif);
+  line-height: 1;
+}
+
+/* ── Footer ─────────────────────────────── */
+.landing-footer {
+  text-align: center;
+  padding: var(--space-8);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 768px) {
+  .landing-header {
+    padding: var(--space-4) var(--space-6);
+  }
+
+  .landing-main {
+    padding: var(--space-16) var(--space-6);
+  }
+
+  .landing-headline {
+    font-size: var(--text-5xl);
+  }
+
+  .landing-features {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .landing-feature {
+    padding: var(--space-6);
+  }
+}
