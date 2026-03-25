@@ -31,6 +31,11 @@ const PRO_FEATURES = [
   { text: 'Cloud backup', locked: false },
   { text: 'Export your data (JSON)', locked: false },
   { text: 'Priority support', locked: false },
+  { text: 'iOS Share Extension', locked: false },
+  { text: 'Android app', locked: false },
+  { text: 'Offline reading', locked: false },
+  { text: 'Readwise integration', locked: false },
+  { text: 'API access (1,000 req/day)', locked: false },
   { text: 'Everything in Free', locked: false },
 ];
 
@@ -63,6 +68,14 @@ const FAQ_ITEMS = [
   {
     q: 'How does team billing work?',
     a: 'Team plans are billed per seat. You can add or remove seats at any time. The billing admin gets a single receipt.',
+  },
+  {
+    q: 'When are the iOS and Android apps coming?',
+    a: 'iOS Share Extension is in beta for Pro members. Android is on the roadmap — sign up to get notified when it launches.',
+  },
+  {
+    q: 'How does the API work?',
+    a: 'Pro members get API access with 1,000 requests/day. Generate a key in Settings, then use our REST API to save articles, manage lists, and export data programmatically.',
   },
 ];
 
@@ -200,6 +213,40 @@ export default function Pricing() {
       <p className="pricing-footer-note">
         All plans include a 14-day free trial. No credit card required to start.
       </p>
+
+      {/* Mobile + API Section */}
+      <div className="pricing-extras">
+        <div className="pricing-extra-card">
+          <div className="pricing-extra-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+              <line x1="12" y1="18" x2="12" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="pricing-extra-title">Mobile apps</h3>
+            <p className="pricing-extra-desc">iOS Share Extension and Android app for Pro members. Save from anywhere.</p>
+          </div>
+          <Link to="/platforms" className="btn btn-ghost btn-sm">
+            Learn more
+          </Link>
+        </div>
+        <div className="pricing-extra-card">
+          <div className="pricing-extra-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="pricing-extra-title">Developer API</h3>
+            <p className="pricing-extra-desc">Build automations, integrate with Zapier, Buffer, and Readwise. For Pro members.</p>
+          </div>
+          <Link to="/api" className="btn btn-ghost btn-sm">
+            Read docs
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

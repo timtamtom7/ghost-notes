@@ -1,0 +1,449 @@
+/* ── Ghost Notes Platforms Page ────────────── */
+
+.platforms-page {
+  min-height: 100vh;
+  background: var(--surface-bg);
+  padding: var(--space-12) var(--space-8);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Top Band ─────────────────────────────── */
+.platforms-topband {
+  text-align: center;
+  margin-bottom: var(--space-20);
+}
+
+.platforms-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.platforms-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: var(--space-5);
+}
+
+.platforms-subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Sections ─────────────────────────────── */
+.platforms-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: center;
+  padding: var(--space-16) 0;
+}
+
+.platforms-section-reverse {
+  direction: rtl;
+}
+.platforms-section-reverse > * {
+  direction: ltr;
+}
+
+.platforms-section-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+}
+
+.platforms-section-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-5);
+  line-height: 1.15;
+}
+
+.platforms-section-desc {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.platforms-feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.platforms-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.platforms-feature-list li svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.platforms-availability {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ── Visual (Mockup) ─────────────────────── */
+.platforms-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.platforms-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0 var(--space-8);
+}
+
+/* ── iOS Mockup ─────────────────────────────── */
+.platform-ios {
+  width: 260px;
+  background: #1c1c1e;
+  border-radius: 36px;
+  border: 6px solid #2c2c2e;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 32px 80px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(200, 169, 126, 0.06);
+}
+
+.ios-chrome {
+  background: #2c2c2e;
+  padding: 8px 12px 0;
+}
+
+.ios-notch {
+  width: 80px;
+  height: 24px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  margin: 0 auto -1px;
+}
+
+.ios-url-bar {
+  background: #1c1c1e;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 8px 8px 0;
+}
+
+.ios-url-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8e8e93;
+  font-size: 11px;
+  font-family: -apple-system, sans-serif;
+}
+
+.ios-article-preview {
+  display: flex;
+  gap: 10px;
+  padding: 14px 14px 8px;
+  align-items: flex-start;
+}
+
+.ios-article-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3a3a3c, #2c2c2e);
+  flex-shrink: 0;
+}
+
+.ios-article-content {
+  flex: 1;
+}
+
+.ios-article-tag {
+  font-size: 9px;
+  font-family: -apple-system, sans-serif;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+
+.ios-article-title {
+  font-size: 12px;
+  font-family: -apple-system, sans-serif;
+  font-weight: 600;
+  color: #f5f5f7;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.ios-article-meta {
+  font-size: 10px;
+  font-family: -apple-system, sans-serif;
+  color: #8e8e93;
+}
+
+.ios-share-sheet {
+  background: rgba(30, 30, 32, 0.95);
+  padding: 16px 16px 28px;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+}
+
+.ios-share-handle {
+  width: 36px;
+  height: 5px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  margin: 0 auto 14px;
+}
+
+.ios-share-label {
+  font-size: 13px;
+  font-family: -apple-system, sans-serif;
+  font-weight: 600;
+  color: #f5f5f7;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.ios-share-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ios-share-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.ios-share-app span {
+  font-size: 9px;
+  font-family: -apple-system, sans-serif;
+  color: #8e8e93;
+}
+
+.ios-share-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #2c2c2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e8e93;
+}
+
+.ios-share-icon.gn {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.ios-share-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: -apple-system, sans-serif;
+  color: var(--color-accent);
+  padding: 8px;
+  background: rgba(200, 169, 126, 0.1);
+  border-radius: 8px;
+}
+
+/* ── Android Mockup ────────────────────────── */
+.platform-android {
+  width: 240px;
+  background: #1a1a1a;
+  border-radius: 28px;
+  border: 6px solid #2a2a2a;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 32px 80px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(200, 169, 126, 0.06);
+}
+
+.android-chrome {
+  background: #121212;
+  padding: 6px 10px;
+}
+
+.android-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-family: -apple-system, sans-serif;
+  color: #9e9e9e;
+  margin-bottom: 6px;
+}
+
+.android-icons {
+  display: flex;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.android-url-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #9e9e9e;
+  font-size: 10px;
+  font-family: -apple-system, sans-serif;
+  margin-bottom: 2px;
+}
+
+.android-share-target {
+  padding: 20px 16px;
+}
+
+.android-share-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.android-share-header > svg {
+  color: var(--color-accent);
+}
+
+.android-share-appname {
+  font-size: 14px;
+  font-family: -apple-system, sans-serif;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin-bottom: 1px;
+}
+
+.android-share-tagline {
+  font-size: 10px;
+  font-family: -apple-system, sans-serif;
+  color: #9e9e9e;
+}
+
+.android-share-preview {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.android-article-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #2c2c2e, #1c1c1e);
+  flex-shrink: 0;
+}
+
+.android-article-title {
+  font-size: 11px;
+  font-family: -apple-system, sans-serif;
+  font-weight: 500;
+  color: #f5f5f5;
+  line-height: 1.35;
+  margin-bottom: 3px;
+}
+
+.android-article-domain {
+  font-size: 9px;
+  font-family: -apple-system, sans-serif;
+  color: var(--color-accent);
+}
+
+.android-save-btn {
+  width: 100%;
+  height: 40px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: -apple-system, sans-serif;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* ── CTA Band ─────────────────────────────── */
+.platforms-cta-band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-10);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  margin-top: var(--space-12);
+}
+
+.platforms-cta-band p {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+/* ── Responsive ───────────────────────────── */
+@media (max-width: 800px) {
+  .platforms-section {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+  .platforms-section-reverse {
+    direction: ltr;
+  }
+  .platforms-page {
+    padding: var(--space-8) var(--space-4);
+  }
+  .platforms-cta-band {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+}

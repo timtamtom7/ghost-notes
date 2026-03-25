@@ -25,6 +25,11 @@ export const PLAN_FEATURES = {
     advancedStats: false,
     exportData: false,
     teamFeatures: false,
+    iosExtension: false,
+    androidApp: false,
+    offlineReading: false,
+    readwiseIntegration: false,
+    apiAccess: false,
   },
   [PLANS.PRO]: {
     maxArticles: Infinity,
@@ -32,6 +37,11 @@ export const PLAN_FEATURES = {
     advancedStats: true,
     exportData: true,
     teamFeatures: false,
+    iosExtension: true,
+    androidApp: true,
+    offlineReading: true,
+    readwiseIntegration: true,
+    apiAccess: true,
   },
   [PLANS.TEAM]: {
     maxArticles: Infinity,
@@ -39,6 +49,11 @@ export const PLAN_FEATURES = {
     advancedStats: true,
     exportData: true,
     teamFeatures: true,
+    iosExtension: true,
+    androidApp: true,
+    offlineReading: true,
+    readwiseIntegration: true,
+    apiAccess: true,
   },
 };
 

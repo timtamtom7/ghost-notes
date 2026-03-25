@@ -15,6 +15,8 @@ export default function Landing() {
         </div>
         <nav className="landing-nav">
           <Link to="/pricing" className="btn btn-ghost btn-sm">Pricing</Link>
+          <Link to="/platforms" className="btn btn-ghost btn-sm">Apps</Link>
+          <Link to="/api" className="btn btn-ghost btn-sm">API</Link>
           <Link to="/auth" className="btn btn-ghost btn-sm">Sign in</Link>
           <Link to="/auth" className="btn btn-primary btn-sm">Get started</Link>
         </nav>
@@ -67,6 +69,16 @@ export default function Landing() {
             </div>
             <h3>Read or let go</h3>
             <p>Read it now, or consciously cull it. Every item gets a verdict — no more endless backlog.</p>
+          </div>
+          <div className="landing-feature">
+            <div className="landing-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                <line x1="12" y1="18" x2="12" y2="18"/>
+              </svg>
+            </div>
+            <h3>iOS &amp; Android</h3>
+            <p>Native mobile apps and share extensions let you save from any app, anywhere.</p>
           </div>
         </section>
 

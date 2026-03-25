@@ -289,6 +289,60 @@
   font-family: var(--font-mono);
 }
 
+/* ── Extras Section ─────────────────────── */
+.pricing-extras {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-16);
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-extra-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: border-color var(--duration-normal) var(--ease-out),
+              transform var(--duration-normal) var(--ease-out);
+}
+
+.pricing-extra-card:hover {
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+}
+
+.pricing-extra-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-accent-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.pricing-extra-title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin-bottom: var(--space-1);
+  font-family: var(--font-sans);
+}
+
+.pricing-extra-desc {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
 /* ── Upgrade Prompt Banner ────────────────────── */
 .upgrade-banner {
   background: linear-gradient(135deg, rgba(200, 169, 126, 0.08), rgba(200, 169, 126, 0.03));

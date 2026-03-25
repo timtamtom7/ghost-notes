@@ -12,6 +12,8 @@ import Settings from './pages/Settings';
 import Pricing from './pages/Pricing';
 import Lists from './pages/Lists';
 import Profile from './pages/Profile';
+import Platforms from './pages/Platforms';
+import API from './pages/API';
 import Onboarding, { ONBOARDING_KEY } from './components/Onboarding';
 
 function ThemeManager() {
@@ -72,6 +74,8 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={user ? <Navigate to="/app" replace /> : <Landing />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/platforms" element={<Platforms />} />
+        <Route path="/api" element={<API />} />
         <Route path="/auth" element={<Auth />} />
         <Route
           path="/app"

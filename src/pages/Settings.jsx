@@ -470,6 +470,47 @@ export default function Settings() {
           </section>
         )}
 
+        {/* Pro Features */}
+        {plan !== PLANS.FREE && (
+          <section className="settings-section">
+            <h2 className="settings-section-title">Pro Features</h2>
+            <div className="settings-card">
+              <div className="settings-row">
+                <div className="settings-row-info">
+                  <span className="settings-row-label">Offline reading</span>
+                  <span className="settings-row-desc">Save articles for offline access. Works on mobile and desktop.</span>
+                </div>
+                <span className="settings-pro-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  Included
+                </span>
+              </div>
+              <div className="settings-divider" />
+              <div className="settings-row">
+                <div className="settings-row-info">
+                  <span className="settings-row-label">Readwise integration</span>
+                  <span className="settings-row-desc">Sync your highlights to Readwise for spaced repetition.</span>
+                </div>
+                <Link to="/app/settings" className="btn btn-secondary btn-sm">
+                  Connect
+                </Link>
+              </div>
+              <div className="settings-divider" />
+              <div className="settings-row">
+                <div className="settings-row-info">
+                  <span className="settings-row-label">API access</span>
+                  <span className="settings-row-desc">Build automations with the Ghost Notes API.</span>
+                </div>
+                <Link to="/api" className="btn btn-secondary btn-sm">
+                  View docs
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Public Profile */}
         <section className="settings-section">
           <h2 className="settings-section-title">Public Profile</h2>

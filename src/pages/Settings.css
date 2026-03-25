@@ -184,6 +184,21 @@
   padding: var(--space-4);
 }
 
+/* ── Pro Badge ──────────────────────────── */
+.settings-pro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  border: 1px solid rgba(200, 169, 126, 0.2);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  height: 24px;
+}
+
 @media (max-width: 768px) {
   .settings-page {
     padding: var(--space-6) var(--space-6);
