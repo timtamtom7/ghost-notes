@@ -11,6 +11,7 @@ import Reading from './pages/Reading';
 import Settings from './pages/Settings';
 import Pricing from './pages/Pricing';
 import Lists from './pages/Lists';
+import Profile from './pages/Profile';
 import Onboarding, { ONBOARDING_KEY } from './components/Onboarding';
 
 function ThemeManager() {
@@ -94,6 +95,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/u/:username" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

@@ -24,7 +24,7 @@ function getDomain(url) {
   }
 }
 
-export default function ArticleCard({ article, onRead, onCull, onReSave, onMoveToList }) {
+export default function ArticleCard({ article, onRead, onCull, onReSave, onMoveToList, onShare }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -91,6 +91,16 @@ export default function ArticleCard({ article, onRead, onCull, onReSave, onMoveT
           <button className="btn btn-ghost btn-sm" onClick={onMoveToList} title="Move to list">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </button>
+        )}
+        {onShare && (
+          <button className="btn btn-ghost btn-sm" onClick={onShare} title="Share">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
             </svg>
           </button>
         )}

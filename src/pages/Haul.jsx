@@ -7,6 +7,7 @@ import { FIREBASE_UNCONFIGURED } from '../firebase';
 import ArticleCard from '../components/ArticleCard';
 import SaveInput from '../components/SaveInput';
 import MoveToListModal from '../components/MoveToListModal';
+import ShareModal from '../components/ShareModal';
 import Toast from '../components/Toast';
 import { EmptyHaul, NetworkError } from '../components/ErrorState';
 import './Haul.css';
@@ -227,6 +228,7 @@ export default function Haul() {
   const navigate = useNavigate();
   const [toast, setToast] = useState(null);
   const [moveModal, setMoveModal] = useState(null);
+  const [shareArticle, setShareArticle] = useState(null);
 
   // Use sample articles when no real articles are loaded (for demo)
   const displayArticles = articles.length > 0 ? articles : SAMPLE_ARTICLES;
@@ -348,6 +350,7 @@ export default function Haul() {
               onRead={() => handleRead(article)}
               onCull={() => handleCull(article.id)}
               onMoveToList={() => setMoveModal(article)}
+              onShare={() => setShareArticle(article)}
             />
           ))}
         </div>
@@ -359,6 +362,13 @@ export default function Haul() {
           onClose={() => setMoveModal(null)}
           article={moveModal}
           onMoved={(listId, listName) => handleMoveArticle(moveModal.id, listId, listName)}
+        />
+      )}
+
+      {shareArticle && (
+        <ShareModal
+          article={shareArticle}
+          onClose={() => setShareArticle(null)}
         />
       )}
 

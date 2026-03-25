@@ -2,18 +2,28 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useSubscription, PLANS } from '../hooks/useSubscription';
+import { useTeams, ROLES } from '../hooks/useTeams';
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, addDoc, serverTimestamp } from 'firebase/firestore';
 import Toast from '../components/Toast';
+import ImportModal from '../components/ImportModal';
+import TeamInviteModal from '../components/TeamInviteModal';
 import './Settings.css';
 
 export default function Settings() {
   const { user, logOut } = useAuth();
   const { plan } = useSubscription();
+  const { teams, createTeam, leaveTeam, deleteTeam } = useTeams();
   const [theme, setTheme] = useState(() => localStorage.getItem('gn-theme') || 'dark');
-  const [emailEnabled, setEmailEnabled] = useState(false);
-  const [haulFrequency, setHaulFrequency] = useState('7');
+  const [emailEnabled, setEmailEnabled] = useState(() => {
+    return localStorage.getItem('gn-email-enabled') === 'true';
+  });
+  const [haulFrequency, setHaulFrequency] = useState(() => localStorage.getItem('gn-haul-freq') || '7');
   const [toast, setToast] = useState(null);
+  const [showImport, setShowImport] = useState(false);
+  const [inviteTeam, setInviteTeam] = useState(null);
+  const [newTeamName, setNewTeamName] = useState('');
+  const [creatingTeam, setCreatingTeam] = useState(false);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -25,6 +35,37 @@ export default function Settings() {
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('gn-theme', next);
     showToast(`${next === 'dark' ? 'Dark' : 'Light'} mode applied.`);
+  };
+
+  const handleEmailToggle = async (val) => {
+    setEmailEnabled(val);
+    localStorage.setItem('gn-email-enabled', val ? 'true' : 'false');
+    showToast(val ? 'Email reminders enabled.' : 'Email reminders disabled.');
+    // Persist to Firestore profile
+    try {
+      const profileRef = doc(db, 'profiles', user.uid);
+      await updateDoc(profileRef, {
+        'settings.emailEnabled': val,
+        'settings.haulFrequencyDays': parseInt(haulFrequency, 10),
+      });
+    } catch (err) {
+      console.warn('Could not save email pref to Firestore:', err);
+    }
+  };
+
+  const handleHaulFrequencyChange = async (val) => {
+    setHaulFrequency(val);
+    localStorage.setItem('gn-haul-freq', val);
+    showToast('Haul frequency updated.');
+    try {
+      const profileRef = doc(db, 'profiles', user.uid);
+      await updateDoc(profileRef, {
+        'settings.haulFrequencyDays': parseInt(val, 10),
+        'settings.emailEnabled': emailEnabled,
+      });
+    } catch (err) {
+      console.warn('Could not save freq pref to Firestore:', err);
+    }
   };
 
   const handleExport = async () => {
@@ -42,6 +83,65 @@ export default function Settings() {
       showToast('Data exported successfully.');
     } catch {
       showToast('Export failed. Please try again.');
+    }
+  };
+
+  const handleImport = async (items) => {
+    // Import items into Firestore directly
+    let imported = 0;
+    for (const item of items) {
+      try {
+        await addDoc(collection(db, 'saves'), {
+          userId: user.uid,
+          url: item.url,
+          title: item.title || item.url,
+          description: item.description || '',
+          favicon: item.favicon || '',
+          readingTime: item.readingTime || null,
+          savedAt: serverTimestamp(),
+          status: 'active',
+          listId: null,
+          listName: null,
+        });
+        imported++;
+      } catch {
+        // Skip duplicates or failures silently
+      }
+    }
+    showToast(`Imported ${imported} articles.`);
+    return { imported };
+  };
+
+  const handleCreateTeam = async (e) => {
+    e.preventDefault();
+    if (!newTeamName.trim()) return;
+    setCreatingTeam(true);
+    try {
+      await createTeam(newTeamName.trim());
+      setNewTeamName('');
+      showToast('Team created!');
+    } catch (err) {
+      showToast(err.message);
+    } finally {
+      setCreatingTeam(false);
+    }
+  };
+
+  const handleLeaveTeam = async (teamId) => {
+    try {
+      await leaveTeam(teamId);
+      showToast('Left team.');
+    } catch (err) {
+      showToast(err.message);
+    }
+  };
+
+  const handleDeleteTeam = async (teamId) => {
+    try {
+      await deleteTeam(teamId);
+      showToast('Team deleted.');
+    } catch (err) {
+      showToast(err.message);
     }
   };
 
@@ -175,7 +275,7 @@ export default function Settings() {
               </div>
               <button
                 className={`settings-toggle${emailEnabled ? ' on' : ''}`}
-                onClick={() => { setEmailEnabled(!emailEnabled); showToast(emailEnabled ? 'Email reminders off.' : 'Email reminders on.'); }}
+                onClick={() => handleEmailToggle(!emailEnabled)}
                 role="switch"
                 aria-checked={emailEnabled}
               >
@@ -193,7 +293,7 @@ export default function Settings() {
               <select
                 className="settings-select"
                 value={haulFrequency}
-                onChange={(e) => { setHaulFrequency(e.target.value); showToast('Haul frequency updated.'); }}
+                onChange={(e) => handleHaulFrequencyChange(e.target.value)}
               >
                 <option value="3">Every 3 days</option>
                 <option value="7">Every 7 days</option>
@@ -242,6 +342,154 @@ export default function Settings() {
           </div>
         </section>
 
+        {/* Import */}
+        <section className="settings-section">
+          <h2 className="settings-section-title">Import</h2>
+          <div className="settings-card">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Import from other services</span>
+                <span className="settings-row-desc">Bring your Pocket, Instapaper, or browser bookmarks here.</span>
+              </div>
+              <button className="btn btn-secondary btn-sm" onClick={() => setShowImport(true)}>
+                Import articles
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Teams */}
+        {plan !== PLANS.FREE && (
+          <section className="settings-section">
+            <h2 className="settings-section-title">Teams</h2>
+            <div className="settings-card">
+              {teams.length === 0 ? (
+                <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 12 }}>
+                  <div className="settings-row-info">
+                    <span className="settings-row-label">No teams yet</span>
+                    <span className="settings-row-desc">Create a team to share lists with colleagues.</span>
+                  </div>
+                  <form onSubmit={handleCreateTeam} style={{ display: 'flex', gap: 8, width: '100%' }}>
+                    <input
+                      type="text"
+                      className="settings-input"
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        borderRadius: 'var(--radius)',
+                        border: '1px solid var(--border-default)',
+                        background: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        fontSize: 'var(--text-sm)',
+                        fontFamily: 'var(--font-body)',
+                        outline: 'none',
+                      }}
+                      placeholder="Team name"
+                      value={newTeamName}
+                      onChange={(e) => setNewTeamName(e.target.value)}
+                    />
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={creatingTeam || !newTeamName.trim()}>
+                      {creatingTeam ? 'Creating…' : 'Create'}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  {teams.map((team) => {
+                    const myRole = team.memberRoles?.[user.uid];
+                    return (
+                      <div key={team.id}>
+                        <div className="settings-row">
+                          <div className="settings-row-info">
+                            <span className="settings-row-label">{team.name}</span>
+                            <span className="settings-row-desc">
+                              {team.members?.length || 1} member{(team.members?.length || 1) !== 1 ? 's' : ''} ·{' '}
+                              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+                                {myRole === ROLES.OWNER ? 'Owner' : myRole === ROLES.ADMIN ? 'Admin' : 'Member'}
+                              </span>
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            {(myRole === ROLES.OWNER || myRole === ROLES.ADMIN) && (
+                              <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={() => setInviteTeam(team)}
+                              >
+                                Invite
+                              </button>
+                            )}
+                            {myRole !== ROLES.OWNER && (
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleLeaveTeam(team.id)}
+                              >
+                                Leave
+                              </button>
+                            )}
+                            {myRole === ROLES.OWNER && (
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleDeleteTeam(team.id)}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="settings-divider" />
+                      </div>
+                    );
+                  })}
+                  <div className="settings-row">
+                    <form onSubmit={handleCreateTeam} style={{ display: 'flex', gap: 8, width: '100%' }}>
+                      <input
+                        type="text"
+                        placeholder="New team name"
+                        value={newTeamName}
+                        onChange={(e) => setNewTeamName(e.target.value)}
+                        style={{
+                          flex: 1,
+                          padding: '8px 12px',
+                          borderRadius: 'var(--radius)',
+                          border: '1px solid var(--border-default)',
+                          background: 'var(--surface-1)',
+                          color: 'var(--text-primary)',
+                          fontSize: 'var(--text-sm)',
+                          fontFamily: 'var(--font-body)',
+                          outline: 'none',
+                        }}
+                      />
+                      <button type="submit" className="btn btn-primary btn-sm" disabled={creatingTeam || !newTeamName.trim()}>
+                        Create team
+                      </button>
+                    </form>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Public Profile */}
+        <section className="settings-section">
+          <h2 className="settings-section-title">Public Profile</h2>
+          <div className="settings-card">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Your public link</span>
+                <span className="settings-row-desc">Share your reading list publicly.</span>
+              </div>
+              <Link
+                to={`/u/${user.uid}`}
+                className="btn btn-secondary btn-sm"
+                target="_blank"
+              >
+                View profile
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* About */}
         <section className="settings-section">
           <h2 className="settings-section-title">About</h2>
@@ -262,6 +510,20 @@ export default function Settings() {
       </div>
 
       {toast && <Toast message={toast} />}
+
+      {showImport && (
+        <ImportModal
+          onClose={() => setShowImport(false)}
+          onImport={handleImport}
+        />
+      )}
+
+      {inviteTeam && (
+        <TeamInviteModal
+          team={inviteTeam}
+          onClose={() => setInviteTeam(null)}
+        />
+      )}
     </div>
   );
 }
